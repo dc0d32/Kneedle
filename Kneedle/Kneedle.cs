@@ -1,8 +1,9 @@
-﻿using MathNet.Numerics;
+﻿
+
+using MathNet.Numerics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 
 namespace Kneedle
 {
@@ -15,28 +16,45 @@ namespace Kneedle
     public enum Curvature
     {
         /* tangent goes anti-clockwise */
-        Positive,
+        Counterclockwise,
         /* tangent goes clockwise */
-        Negative
+        Clockwise
     }
 
     public static class KneedleAlgorithm
     {
         /**
+         * <summary>
+         * <para>
          * Calculates knee points using the Kneedle algorithm. Returns the x value corresponding to the knee
          * point when successful, null otherwise.
+         * </para>
+         * <para>
          * Reference: 
          *      Finding a ‘kneedle’in a haystack: Detecting knee points in system behavior. 
          *      Satopaa, V and Albrecht, J and Irwin, D and Raghavan, B
-         *      https://raghavan.usc.edu/papers/kneedle-simplex11.pdf
-         *      
-         * Needs the data points provided x-sorted
-         * Positive curvature is when the tangent traces anti-clockwise
+         *      <see cref="https://raghavan.usc.edu/papers/kneedle-simplex11.pdf"/>
+         * </para>
+         * 
+         *  <list type="bullet">
+         *  <param name="x">x: X axis values of the points. Points must be sorted in ascending order w.r.t. X axis.</param>
+         *  <param name="y">y: Y axis values of the points.</param>
+         *  <param name="direction">direction: If the curve is increasing or decreasing. Make sure to set this value according to the input curve.</param>
+         *  <param name="concavity">concavity: Whether the curve has positive or negative curvature. In other words, concave or convex. Whether the tangent rotates clockwise or counterclockwise. Make sure to set this value according to the input curve.</param>
+         *  <param name="sensitivity">sensitivity: Adjusts the knee detection threshold. Defaults to 1 as per the paper.</param>
+         *  <param name="forceLinearInterpolation">forceLinearInterpolation: Interpolation is done using robust cubic splines. For some inputs, spline can overshoot. This param forces linear interpolation instead of cubic spline.</param>
+         *  </list>
+         *  
          * Can return null when the algorithm fails to identify a knee/elbow for various reasons:
          *      - the number of data points is too small
          *      - there are no local maxima on the diffs, which means either the curve is a line, or the
          *        parameters provided are incompatible with the curve
-         *      
+         *  
+         *  <list type="bullet">
+         *  2019-01-08: rename curvature enum to be easy to interpret and remember (Prashant Borole)
+         *  2019-01-07: initial version (Prashant Borole)
+         *  </list>
+         *  </summary>
          */
         public static double? CalculateKneePoints(double[] x, double[] y, CurveDirection direction, Curvature concavity, double sensitivity = 1, bool forceLinearInterpolation = true)
         {
@@ -62,13 +80,13 @@ namespace Kneedle
 
             var x_diff = x_norm;
             var y_diff = new double[numPoints];
-            if(direction == CurveDirection.Decreasing)
+            if (direction == CurveDirection.Decreasing)
             {
                 for (int i = 0; i < numPoints; i++)
                 {
                     y_diff[i] = x_norm[i] + y_norm[i];
                 }
-                if(concavity == Curvature.Positive )
+                if (concavity == Curvature.Counterclockwise)
                 {
                     for (int i = 0; i < numPoints; i++)
                     {
@@ -83,7 +101,7 @@ namespace Kneedle
                 {
                     y_diff[i] = y_norm[i] - x_norm[i];
                 }
-                if (concavity == Curvature.Positive)
+                if (concavity == Curvature.Counterclockwise)
                 {
                     for (int i = 0; i < numPoints; i++)
                     {
@@ -120,15 +138,15 @@ namespace Kneedle
                     continue;
                 }
 
-                if(xmn_idxs_set.Contains(x_i))
+                if (xmn_idxs_set.Contains(x_i))
                 {
-                    if(x_i < x.Length - 1 && y_diff[x_i + 1] > y_diff[x_i])
+                    if (x_i < x.Length - 1 && y_diff[x_i + 1] > y_diff[x_i])
                     {
                         tmx[curMaximaIdx] = 0;
                     }
                 }
 
-                if(y_diff[x_i] < tmx[curMaximaIdx] || tmx[curMaximaIdx] < 0)
+                if (y_diff[x_i] < tmx[curMaximaIdx] || tmx[curMaximaIdx] < 0)
                 {
                     knee = x[xmx_idxs[curMaximaIdx]];
                 }
@@ -166,7 +184,7 @@ namespace Kneedle
                 var lcomp = max ? cur > prev : cur < prev;
                 var rcomp = max ? cur > next : cur < next;
 
-                if(lcomp && rcomp)
+                if (lcomp && rcomp)
                 {
                     ret.Add(i);
                 }

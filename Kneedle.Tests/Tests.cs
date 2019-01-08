@@ -21,18 +21,18 @@ namespace KneedleTests
         [Test]
         public void TestInvalidInputs()
         {
-            var k = Kneedle.KneedleAlgorithm.CalculateKneePoints(null, null, Kneedle.CurveDirection.Decreasing, Kneedle.Curvature.Negative);
+            var k = Kneedle.KneedleAlgorithm.CalculateKneePoints(null, null, Kneedle.CurveDirection.Decreasing, Kneedle.Curvature.Clockwise);
             Assert.IsNull(k);
-            k = Kneedle.KneedleAlgorithm.CalculateKneePoints(new double[0], new double[1], Kneedle.CurveDirection.Decreasing, Kneedle.Curvature.Negative);
+            k = Kneedle.KneedleAlgorithm.CalculateKneePoints(new double[0], new double[1], Kneedle.CurveDirection.Decreasing, Kneedle.Curvature.Clockwise);
             Assert.IsNull(k);
-            k = Kneedle.KneedleAlgorithm.CalculateKneePoints(new double[1], new double[1], Kneedle.CurveDirection.Decreasing, Kneedle.Curvature.Negative);
+            k = Kneedle.KneedleAlgorithm.CalculateKneePoints(new double[1], new double[1], Kneedle.CurveDirection.Decreasing, Kneedle.Curvature.Clockwise);
             Assert.IsNull(k);
         }
 
         [Test]
         public void TestCurveWithoutKnee()
         {
-            var k = Kneedle.KneedleAlgorithm.CalculateKneePoints(new double[2], new double[2], Kneedle.CurveDirection.Decreasing, Kneedle.Curvature.Negative);
+            var k = Kneedle.KneedleAlgorithm.CalculateKneePoints(new double[2], new double[2], Kneedle.CurveDirection.Decreasing, Kneedle.Curvature.Clockwise);
             Assert.IsNull(k);
         }
 
@@ -41,7 +41,7 @@ namespace KneedleTests
         {
             var y = new double[] { 2, 4, 10 };
             var x = Enumerable.Range(0, y.Length).Select(v => (double)v).ToArray();
-            var k = Kneedle.KneedleAlgorithm.CalculateKneePoints(x, y, Kneedle.CurveDirection.Increasing, Kneedle.Curvature.Positive);
+            var k = Kneedle.KneedleAlgorithm.CalculateKneePoints(x, y, Kneedle.CurveDirection.Increasing, Kneedle.Curvature.Counterclockwise);
             Assert.IsNotNull(k);
             Assert.AreEqual(1d, k.Value);
         }
@@ -51,7 +51,7 @@ namespace KneedleTests
         {
             var y = new double[] { 2, 4, 10 };
             var x = new double[] { 0, 7, 100 };
-            var k = Kneedle.KneedleAlgorithm.CalculateKneePoints(x, y, Kneedle.CurveDirection.Increasing, Kneedle.Curvature.Positive);
+            var k = Kneedle.KneedleAlgorithm.CalculateKneePoints(x, y, Kneedle.CurveDirection.Increasing, Kneedle.Curvature.Counterclockwise);
             Assert.IsNotNull(k);
             Assert.AreEqual(7d, k.Value);
         }
@@ -59,7 +59,7 @@ namespace KneedleTests
         [Test]
         public void TestIncreasingPositiveCurvature()
         {
-            var k = Kneedle.KneedleAlgorithm.CalculateKneePoints(x_all, y_pos_inc, Kneedle.CurveDirection.Increasing, Kneedle.Curvature.Positive);
+            var k = Kneedle.KneedleAlgorithm.CalculateKneePoints(x_all, y_pos_inc, Kneedle.CurveDirection.Increasing, Kneedle.Curvature.Counterclockwise);
             Assert.IsNotNull(k);
             Console.WriteLine(k.Value);
             Assert.AreEqual(k.Value, 67d);
@@ -68,7 +68,7 @@ namespace KneedleTests
         [Test]
         public void TestDecreasingPositiveCurvature()
         {
-            var k = Kneedle.KneedleAlgorithm.CalculateKneePoints(x_all, y_pos_dec, Kneedle.CurveDirection.Decreasing, Kneedle.Curvature.Positive);
+            var k = Kneedle.KneedleAlgorithm.CalculateKneePoints(x_all, y_pos_dec, Kneedle.CurveDirection.Decreasing, Kneedle.Curvature.Counterclockwise);
             Assert.IsNotNull(k);
             Console.WriteLine(k.Value);
             Assert.AreEqual(k.Value, 32d);
@@ -77,7 +77,7 @@ namespace KneedleTests
         [Test]
         public void TestIncreasingNegativeCurvature()
         {
-            var k = Kneedle.KneedleAlgorithm.CalculateKneePoints(x_all, y_neg_inc, Kneedle.CurveDirection.Increasing, Kneedle.Curvature.Negative);
+            var k = Kneedle.KneedleAlgorithm.CalculateKneePoints(x_all, y_neg_inc, Kneedle.CurveDirection.Increasing, Kneedle.Curvature.Clockwise);
             Assert.IsNotNull(k);
             Console.WriteLine(k.Value);
             Assert.AreEqual(k.Value, 32d);
@@ -86,7 +86,7 @@ namespace KneedleTests
         [Test]
         public void TestDecreasingNegativeCurvature()
         {
-            var k = Kneedle.KneedleAlgorithm.CalculateKneePoints(x_all, y_neg_dec, Kneedle.CurveDirection.Decreasing, Kneedle.Curvature.Negative);
+            var k = Kneedle.KneedleAlgorithm.CalculateKneePoints(x_all, y_neg_dec, Kneedle.CurveDirection.Decreasing, Kneedle.Curvature.Clockwise);
             Assert.IsNotNull(k);
             Console.WriteLine(k.Value);
             Assert.AreEqual(k.Value, 67d);
@@ -101,7 +101,7 @@ namespace KneedleTests
             Array.Sort(x);
             var y = Enumerable.Range(0, numSamples).Select(v => 1.0 * v / numSamples).ToArray();
 
-            var k = Kneedle.KneedleAlgorithm.CalculateKneePoints(x, y, Kneedle.CurveDirection.Increasing, Kneedle.Curvature.Negative);
+            var k = Kneedle.KneedleAlgorithm.CalculateKneePoints(x, y, Kneedle.CurveDirection.Increasing, Kneedle.Curvature.Clockwise);
             Assert.IsNotNull(k);
             Console.WriteLine(k.Value);
             Assert.IsTrue(Math.Abs(k.Value - 60.5) <= 5.0);
